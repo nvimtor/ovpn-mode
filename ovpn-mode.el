@@ -125,7 +125,10 @@ Searches for an entry where `:host` matches the ovpn CONFIG file name
 (e.g., \"myvpn.ovpn\").
 
 Example authinfo entry: machine CONFIG.OVPN login USER password PASS
-
+Example password-store entry: ```
+PASS
+user: USER
+```
 Return a LIST of user and password for a given config or NIL."
     (let* ((host (file-name-nondirectory config))
            (entry (car (auth-source-search :host host
