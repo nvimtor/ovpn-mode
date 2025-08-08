@@ -103,11 +103,6 @@
 ;; used for keyword filtering of .ovpn listings
 (defvar ovpn-mode-base-filter nil)
 
-(defcustom ovpn-mode-authinfo-path "~/.authinfo.gpg"
-  "Path to authinfo data."
-  :type 'string
-  :group 'ovpn)
-
 (defcustom ovpn-mode-check-authinfo t
   "Check authinfo for configname.ovpn associated user:pass data."
   :type 'boolean
