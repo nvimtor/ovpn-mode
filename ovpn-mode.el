@@ -146,7 +146,7 @@ Return a LIST of user and password for a given config or NIL."
 (defun ovpn-mode-clear-authinfo-cache ()
   "Call this if you add new `ovpn-mode' authinfo data in a running Emacs instance."
   (interactive)
-  (setq netrc-cache nil))
+  (auth-source-forget-all-cached))
 
 ;;; major mode for future buffer and keymap enhancements
 (defvar ovpn-mode-keywords '("ovpn"))
