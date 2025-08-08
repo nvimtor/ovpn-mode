@@ -50,7 +50,7 @@
 
 ;;; Code:
 (require 'cl-lib)
-(require 'netrc)  ; authinfo handling
+(require 'auth-source) ; authsource handling
 (require 'subr-x) ; string-join
 
 (defgroup ovpn nil
@@ -124,15 +124,24 @@
   :group 'ovpn)
 
 (defun ovpn-mode-pull-authinfo (config)
-  "Return a LIST of user and password for a given config or NIL.
+    "Pull auth info using Emacs's `auth-source` library.
 
-Example authinfo entry: machine CONFIG.OVPN login USER password PASS"
-  (let* ((netrc (netrc-parse (expand-file-name ovpn-mode-authinfo-path)))
-         (machine-entry (netrc-machine netrc config)))
-    (if machine-entry
-        (list (netrc-get machine-entry "login")
-              (netrc-get machine-entry "password"))
-      nil)))
+Searches for an entry where `:host` matches the ovpn CONFIG file name
+(e.g., \"myvpn.ovpn\").
+
+Example authinfo entry: machine CONFIG.OVPN login USER password PASS
+
+Return a LIST of user and password for a given config or NIL."
+    (let* ((host (file-name-nondirectory config))
+           (entry (car (auth-source-search :host host
+                                           :require '(:user :secret)
+                                           :max 1)))
+           (user (plist-get entry :user))
+           (secret-fn (plist-get entry :secret))
+         (pass (when secret-fn (funcall secret-fn))))
+      (if (and user pass)
+          (list user pass)
+        nil)))
 
 (defun ovpn-mode-clear-authinfo-cache ()
   "Call this if you add new `ovpn-mode' authinfo data in a running Emacs instance."
